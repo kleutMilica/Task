@@ -1,0 +1,99 @@
+@model IEnumerable<KeyValuePair<string, double>>
+
+<div class="text-center">
+    <h4 class="display-4">Employees Statistic</h4>
+    <div class="card-header">
+        <div class="chart">
+            <canvas id="piechart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+30JU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
+        crossorigin="anonymous">
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+
+
+<button id="saveChartBtn">Save Chart as Image</button>
+
+<script>
+    var  piechartCanvas = document.getElementById("piechart");
+    var  employeesNames = [];
+    var  employeesHours = [];
+
+    @foreach(var item in Model)
+    {
+        @:employeesNames.push('@item.Key');
+        @:employeesHours.push('@item.Value');
+
+    }
+
+    var piechart = new Chart(piechartCanvas, {
+        type: 'pie',
+        data: {
+            labels: employeesNames,
+        datasets: [{
+            data: employeesHours,
+            borderWidth: 0,
+            backgroundColor: [
+                'rgb(255,99,132)',
+                'rgb(54,162,235)',
+                'rgb(157,230,41)',
+                'rgb(41,224,230)',
+                'rgb(255,205,86)',
+                'rgb(153,102,204)',
+                'rgb(0,255,255)',
+                'rgb(0,168,107)',
+                'rgb(255,140,105)',
+                'rgb(253,233,16)'
+            ],
+            hoverBackgroundColor: [
+                'rgb(255,99,132)',
+                'rgb(54,162,235)',
+                'rgb(157,230,41)',
+                'rgb(41,224,230)',
+                'rgb(255,205,86)',
+                'rgb(153,102,204)',
+                'rgb(0,255,255)',
+                'rgb(0,168,107)',
+                'rgb(255,140,105)',
+                'rgb(253,233,16)'
+                
+
+            ]
+        }]
+        },
+            options: {
+                responsive:true,
+                legend: {
+                    position: "bottom",
+                    labels: {
+                        boxWidth: 11,
+                        fontColor: "#757681",
+                        fontSize: 11
+                    }
+                }
+            }
+
+
+
+    });
+
+    document.getElementById('saveChartBtn').addEventListener('click', function() {
+        html2canvas(document.getElementById('piechart'), {
+            onrendered: function(canvas) {
+            var link = document.createElement('a');
+            link.download = 'pie_chart.png';
+            link.href = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+            link.click();
+            }
+        });
+    });
+
+
+
+</script>
